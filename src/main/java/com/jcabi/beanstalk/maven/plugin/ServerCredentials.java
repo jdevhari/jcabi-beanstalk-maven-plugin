@@ -43,7 +43,7 @@ import org.apache.maven.settings.Settings;
  * AWS credentials from settings.xml.
  *
  * @author Yegor Bugayenko (yegor@teamed.io)
- * @version $Id$
+ * @version $Id: 990e3ebf66d4f2d12bcbdad0f6aeb122786e4210 $
  * @since 0.3
  */
 @ToString
@@ -70,13 +70,7 @@ final class ServerCredentials implements AWSCredentials {
     protected ServerCredentials(@NotNull final Settings settings,
         @NotNull final String name)
         throws MojoFailureException {
-        final Server server = settings.getServer(name);
-        if (server == null) {
-            throw new MojoFailureException(
-                String.format("Server '%s' is absent in settings.xml", name)
-            );
-        }
-        this.key = server.getUsername().trim();
+        this.key = System.getenv("AWS_USER_KEY");
         if (!this.key.matches("[A-Z0-9]{20}")) {
             throw new MojoFailureException(
                 String.format(
@@ -85,7 +79,7 @@ final class ServerCredentials implements AWSCredentials {
                 )
             );
         }
-        this.secret = server.getPassword().trim();
+        this.secret = System.getenv("AWS_USER_SECRET");
         if (!this.secret.matches("[a-zA-Z0-9\\+/]{40}")) {
             throw new MojoFailureException(
                 String.format(
